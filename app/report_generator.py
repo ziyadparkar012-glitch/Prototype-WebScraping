@@ -1,6 +1,9 @@
-from xhtml2pdf import pisa
+
 from datetime import datetime
 
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
 
 def fmt(value):
     if value is None:
@@ -145,8 +148,23 @@ def render_html_report(data: dict):
     """
 
 
-def generate_pdf_report(report_data: dict, output_path: str):
-    html = render_html_report(report_data)
 
-    with open(output_path, "wb") as pdf_file:
-        pisa.CreatePDF(html, dest=pdf_file)
+
+def generate_pdf_report(report_data: dict, output_path: str):
+    styles = getSampleStyleSheet()
+    doc = SimpleDocTemplate(output_path, pagesize=letter)
+
+    content = []
+
+    def add(title, value):
+        text = f"<b>{title}:</b> {value if value else 'N/A'}"
+        content.append(Paragraph(text, styles["Normal"]))
+        content.append(Spacer(1, 10))
+
+    content.append(Paragraph("<b>Property Report</b>", styles["Title"]))
+    content.append(Spacer(1, 20))
+
+    for key, value in report_data.items():
+        add(key.replace("_", " ").title(), value)
+
+    doc.build(content)
