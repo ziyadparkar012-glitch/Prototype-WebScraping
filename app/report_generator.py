@@ -164,7 +164,21 @@ def generate_pdf_report(report_data: dict, output_path: str):
     content.append(Paragraph("<b>Property Report</b>", styles["Title"]))
     content.append(Spacer(1, 20))
 
-    for key, value in report_data.items():
-        add(key.replace("_", " ").title(), value)
+    sections = {
+    "Location": ["address", "city", "state", "zip_code", "county"],
+    "Ownership": ["owner", "owner_type", "apn"],
+    "Property Details": ["property_type", "use_desc", "square_feet", "lot_size_acres", "year_built", "stories"],
+    "Valuation": ["market_estimate", "annual_tax", "last_sale_date", "last_sale_price"],
+    "Risk": ["flood_zone", "flood_zone_community_name"]
+    }
+    for section, fields in sections.items():
+        content.append(Paragraph(f"<b>{section}</b>", styles["Heading2"]))
+        content.append(Spacer(1, 10))
+
+    for field in fields:
+        value = report_data.get(field)
+        add(field.replace("_", " ").title(), value)
+
+    content.append(Spacer(1, 15))
 
     doc.build(content)
