@@ -4,4 +4,4 @@ jinja2
 python-multipart
 python-dotenv
 requests
-reportlab
+weasyprint
